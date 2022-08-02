@@ -243,8 +243,7 @@ wifiIcon.place(x=icon_l, y=210, width=24, height=24)
 wifiIcon['bg'] = footer['bg']
 
 def get_mac():
-    mac = os.popen("cat /sys/class/net/wlan0/address").read().strip()
-    return mac
+    return os.popen("cat /sys/class/net/wlan0/address").read().strip()
 
 def destroy_qrcode():
     hide_widget(qrcode_frame)
@@ -311,7 +310,7 @@ def clear_messages():
 def add_message(message):
     global last_message_time
     last_message_time = time.time()
-    messages.insert(END, " " + message + '\n')
+    messages.insert(END, f" {message}" + '\n')
 
 
 def set_state():
@@ -342,9 +341,9 @@ def update_mode():
 def config_default(key, default, dictionary=None):
 
     global config
-    if dictionary == None:
+    if dictionary is None:
         dictionary = config
-    
+
     if not dictionary.get(key):
         dictionary[key] = default
 
@@ -395,11 +394,7 @@ def load_config():
 
 def toggle_mode():
     global config
-    if config['mode'] == 'dpp':
-        config['mode'] = 'clinic'
-    else:
-        config['mode'] = 'dpp'
-
+    config['mode'] = 'clinic' if config['mode'] == 'dpp' else 'dpp'
     update_mode()
     save_config()
 
@@ -411,23 +406,22 @@ def restore_defaults(null_arg=0):
 
 def get_wifi_ipaddress():
     fields = os.popen("ifconfig wlan0 | grep 'inet '").read().strip().split(" ")
-    ipaddress = None
-    if len(fields) >= 2:
-        ipaddress = fields[1]
-    return ipaddress
+    return fields[1] if len(fields) >= 2 else None
 
 def get_ethernet_ipaddress():
     fields = os.popen("ifconfig eth0 | grep 'inet '").read().strip().split(" ")
-    ipaddress = None
-    if len(fields) >= 2:
-        ipaddress = fields[1]
-    return ipaddress
+    return fields[1] if len(fields) >= 2 else None
 
 
 
 def get_ssid():
-    ssid = os.popen("iwconfig wlan0 | grep 'ESSID'| awk '{print $4}' | awk -F\\\" '{print $2}'").read().strip()
-    return ssid
+    return (
+        os.popen(
+            "iwconfig wlan0 | grep 'ESSID'| awk '{print $4}' | awk -F\\\" '{print $2}'"
+        )
+        .read()
+        .strip()
+    )
 
 def generate_dpp_uri():
 
@@ -554,13 +548,12 @@ def cancel_onboard(null_arg=0):
 def onboard(null_arg=0):
     global onboard_active
 
-    if (onboard_active):
+    if onboard_active:
         cancel_onboard()
+    elif config['mode'] == "dpp":
+        onboard_dpp()
     else:
-        if config['mode'] == "dpp":
-            onboard_dpp()
-        else:
-            onboard_clinic()
+        onboard_clinic()
     onboard_active = not onboard_active
 
 def showLinked():
@@ -615,12 +608,9 @@ def shutdown_released(nullarg=0):
     if shutdown_timer != None:
         shutdown_timer.cancel()
     # replace with restart app after testing
-    if not shutting_down:
-
-        if canExit:
-            add_message("Restarting Application..")
-            #exit_app()
-            print os.popen("sudo systemctl restart lightdm")
+    if not shutting_down and canExit:
+        add_message("Restarting Application..")
+        add_message("Restarting Application..")
 
         # This restarts the desktop, which restarts the application.
         #add_message("Restarting Application..")
@@ -698,37 +688,32 @@ def updateTimer():
     wifi_ip = get_wifi_ipaddress()
     ethernet_ip = get_ethernet_ipaddress()
 
-    if (context['net_display'] == DISP_SSID):
+    if (
+        context['net_display'] != DISP_SSID
+        and context['net_display'] != DISP_WIFI_IP
+        and ethernet_ip
+    ):
+        footer.config(text=f"ETH: {ethernet_ip}")
+        context['net_display'] = DISP_SSID
+    elif context['net_display'] not in [DISP_SSID, DISP_WIFI_IP] or (
+        context['net_display'] == DISP_SSID
+    ):
+        # Skip ahead to SSID
         footer.config(text=ssid)
         context['net_display'] = DISP_WIFI_IP
-    elif (context['net_display'] == DISP_WIFI_IP):
+
+    else:
         if (wifi_ip):
             footer.config(text=wifi_ip)
         else:
             footer.config(text="NO IP ADDRESS")
         context['net_display'] = DISP_ETHERNET_IP
-    else:
-        # We use a wired connection for debug/testing (and for using the configurator proxy (dpp_proxy.py))
-        if (ethernet_ip):
-            footer.config(text="ETH: "+ ethernet_ip)
-            context['net_display'] = DISP_SSID
-        else:
-            # Skip ahead to SSID
-            footer.config(text=ssid)
-            context['net_display'] = DISP_WIFI_IP
-
-    if (ssid == None or ssid == ""):
+    if ssid is None or ssid == "":
         hideWifi()
-        showWifi()
-    else:
-        showWifi()
-
-    if wpa_subscriber_exists():
-        showLinked()
-    else:
+    showWifi()
+    if not wpa_subscriber_exists():
         hideLinked()
-        showLinked()
-
+    showLinked()
     window.after(4000,updateTimer)
 
     if time.time() - last_message_time > 30:

@@ -58,7 +58,7 @@ class GLed(object):
         GPIO.output(self.pin, False)
 
 if __name__ == '__main__':
-    
+
     led = GLed(17)
 
     i = 0
@@ -67,8 +67,8 @@ if __name__ == '__main__':
 
     while True:
         #i = (i + 1) % 4
-        
-        if i == 0 or i == 2:
+
+        if i in {0, 2}:
             led.off()
         elif i == 1:
             led.on()

@@ -18,23 +18,23 @@ def generateKey(keyName, path=None):
 
 	# Save as PEM files
 	if path is not None:
-		with open(path+'/'+keyName, "wb") as f:
-		    f.write(privateKeyPEM(private_key))
-		
-		with open(path+'/'+keyName+".pub", "wb") as f:
-		    f.write(publicKeyPEM(private_key.public_key()))
-	
+		with open(f'{path}/{keyName}', "wb") as f:
+			f.write(privateKeyPEM(private_key))
+
+		with open(f'{path}/{keyName}.pub', "wb") as f:
+			f.write(publicKeyPEM(private_key.public_key()))
+
 	return private_key
 
 def deleteKey(keyName, path):
 	try:
-		os.remove(path+'/'+keyName)
-		os.remove(path+'/'+keyName+".pub")
+		os.remove(f'{path}/{keyName}')
+		os.remove(f'{path}/{keyName}.pub')
 	except Exception as e:
 		pass
 
 def keyExists(keyName, path):
-	return os.path.isfile(path+'/'+keyName) 
+	return os.path.isfile(f'{path}/{keyName}') 
 
 def privateKeyPEM(private_key):
 	return private_key.private_bytes(
@@ -60,8 +60,8 @@ def generateCSR(key, csrName, path=None):
 
 	if path is not None:
 		# Write our CSR out to disk.
-		with open(path+'/'+csrName+".pem", "wb") as f:
-		    f.write(csr.public_bytes(serialization.Encoding.PEM))
+		with open(f'{path}/{csrName}.pem', "wb") as f:
+			f.write(csr.public_bytes(serialization.Encoding.PEM))
 	return csr
 
 # Generate a hash of the public key for use as deviceID
@@ -69,21 +69,14 @@ def publicKeyHash(public_key):
 	return hashlib.sha256(publicKeyPEM(public_key)).hexdigest()
 
 def loadPrivateKey(name, path):
-	with open(path+'/'+name, "rb") as key_file:
-	    key = serialization.load_pem_private_key(
-	        key_file.read(),
-	        password=None,
-	        backend=backend
-	    )
-	    return key
+	with open(f'{path}/{name}', "rb") as key_file:
+		return serialization.load_pem_private_key(
+			key_file.read(), password=None, backend=backend
+		)
 
 def loadPublicKey(name, path):
-	with open(path+'/'+name+'.pub', "rb") as key_file:
-	    key = serialization.load_pem_public_key(
-	        key_file.read(),
-	        backend=backend
-	    )
-	    return key
+	with open(f'{path}/{name}.pub', "rb") as key_file:
+		return serialization.load_pem_public_key(key_file.read(), backend=backend)
 
 if __name__ == '__main__':
 

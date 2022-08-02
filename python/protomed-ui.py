@@ -166,14 +166,16 @@ def exit_app():
 
 def get_ipaddress():
     fields = os.popen("ifconfig wlan0 | grep 'inet '").read().strip().split(" ")
-    ipaddress = "NO IP ADDRESS"
-    if len(fields) >= 2:
-        ipaddress = fields[1]
-    return ipaddress
+    return fields[1] if len(fields) >= 2 else "NO IP ADDRESS"
 
 def get_ssid():
-    ssid = os.popen("iwconfig wlan0 | grep 'ESSID'| awk '{print $4}' | awk -F\\\" '{print $2}'").read().strip()
-    return ssid
+    return (
+        os.popen(
+            "iwconfig wlan0 | grep 'ESSID'| awk '{print $4}' | awk -F\\\" '{print $2}'"
+        )
+        .read()
+        .strip()
+    )
 
 def render_banner():
     title = "Micronets"
@@ -216,7 +218,7 @@ def updateTimer():
     else:
         footer.config(text=get_ipaddress())
 
-    if (ssid == None or ssid == ""):
+    if ssid is None or ssid == "":
         hideWifi()
     else:
         showWifi()

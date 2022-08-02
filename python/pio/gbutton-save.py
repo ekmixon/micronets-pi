@@ -56,8 +56,7 @@ class GButton(object):
 
     # local callback for button primitives
     def button_callback(self, channel):
-        pressed = GPIO.input(self.pin)
-        if (pressed):
+        if pressed := GPIO.input(self.pin):
             self.canclick = True
             if self.user_callbacks[GButton.DOWN]:
                 self.user_callbacks[GButton.DOWN]()
@@ -69,10 +68,10 @@ class GButton(object):
         else:
             if self.user_callbacks[GButton.UP]:
                 self.user_callbacks[GButton.UP]()
-                
+
             if self.user_callbacks[GButton.CLICK] and self.canclick:
                 self.user_callbacks[GButton.CLICK]()
-                    
+
             if self.user_callbacks[GButton.LONGPRESS]:
                 self.count = 0
                 self.timer.stop()

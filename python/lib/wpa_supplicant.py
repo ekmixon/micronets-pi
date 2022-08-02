@@ -17,16 +17,13 @@ def wpa_reset(all=False):
 	rm_silent('/etc/micronets/networks/subscriber/wifi_key')
 	rm_silent('/etc/micronets/networks/subscriber/wifi.crt')
 
-	# create initial wpa_supplicant.conf
-	f = open('/etc/wpa_supplicant/wpa_supplicant.conf', 'w')
-	f.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n")
-	f.write("update_config=1\n")
-	# Note: 'pmf=2' REQUIRES 'ieee80211w=1' for network {} stanzas
-	f.write("pmf=2\n")
-	f.write("dpp_config_processing=2\n")
-	f.write('\n')
-
-	f.close();
+	with open('/etc/wpa_supplicant/wpa_supplicant.conf', 'w') as f:
+		f.write("ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n")
+		f.write("update_config=1\n")
+		# Note: 'pmf=2' REQUIRES 'ieee80211w=1' for network {} stanzas
+		f.write("pmf=2\n")
+		f.write("dpp_config_processing=2\n")
+		f.write('\n')
 
 	# add default networks
 	all = True
@@ -80,16 +77,16 @@ def rm_silent(filename):
 
 def add_network(network, priority):
 
-	infile = '/etc/micronets/networks/'+network+'/network.config'
+	infile = f'/etc/micronets/networks/{network}/network.config'
 	outfile = '/etc/wpa_supplicant/wpa_supplicant.conf'
 
 	with open(outfile, 'a') as fout, open(infile, 'r') as fin:
 		fout.write('')
 		fout.write('network={\n')
-		fout.write('    priority={}\n'.format(priority))
+		fout.write(f'    priority={priority}\n')
 
 		for line in fin:
-			fout.write('    {}'.format(line))
+			fout.write(f'    {line}')
 
 		fout.write('}\n')
 

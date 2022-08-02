@@ -136,7 +136,7 @@ class DeviceUI(object):
 
         for i in range(items):
             index = start + i
-            text = u"\u2022 {}".format(self.messages[index])
+            text = f"\u2022 {self.messages[index]}"
             draw.text((0, (i*13)+1), text=text, fill="white", font=self.font2)
 
         if self.start_time != None:
@@ -166,14 +166,12 @@ class DeviceUI(object):
 
     def get_ipaddress(self):
         fields = os.popen("ifconfig wlan0 | grep 'inet '").read().strip().split(" ")
-        ipaddress = "NO IP ADDRESS"
-        if len(fields) >= 2:
-            ipaddress = fields[1]
-        return ipaddress
+        return fields[1] if len(fields) >= 2 else "NO IP ADDRESS"
 
     def get_ssid(self):
-        ssid = os.popen("iwconfig wlan0 | grep 'ESSID'| awk '{print $4}' | awk -F\\\" '{print $2}'").read()
-        return ssid
+        return os.popen(
+            "iwconfig wlan0 | grep 'ESSID'| awk '{print $4}' | awk -F\\\" '{print $2}'"
+        ).read()
 
 
 if __name__ == '__main__':
@@ -188,7 +186,7 @@ if __name__ == '__main__':
             if i == 0:
                 display.clear_messages()
             else:
-                display.add_message("message {}".format(i))
+                display.add_message(f"message {i}")
             display.refresh()
             time.sleep(1)
 

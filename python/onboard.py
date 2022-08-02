@@ -28,20 +28,20 @@ fileDir = os.path.dirname(os.path.realpath('__file__'))
 deviceConfig = os.path.join(fileDir, '../config/thisDevice')
 
 if not os.path.exists(deviceConfig):
-	# default to device 0. 
-	# to change selected device, manually replace symbolic link.
-	defaultDevice = os.path.join(fileDir, '../config/devices/device-0.json')
-	call("ln -s " + defaultDevice + " " + deviceConfig, shell=True)
+    # default to device 0. 
+    # to change selected device, manually replace symbolic link.
+    defaultDevice = os.path.join(fileDir, '../config/devices/device-0.json')
+    call(f"ln -s {defaultDevice} {deviceConfig}", shell=True)
 
 # Ensure we have a registration server configuration, copy if needed.
 fileDir = os.path.dirname(os.path.realpath('__file__'))
 registrationConfig = os.path.join(fileDir, '../config/thisRegistration.json')
 
 if not os.path.exists(registrationConfig):
-	# default to device 0. 
-	# to change selected device, manually replace symbolic link.
-	defaultRegistration = os.path.join(fileDir, '../config/registration.json')
-	call("cp " + defaultRegistration + " " + registrationConfig, shell=True)
+    # default to device 0. 
+    # to change selected device, manually replace symbolic link.
+    defaultRegistration = os.path.join(fileDir, '../config/registration.json')
+    call(f"cp {defaultRegistration} {registrationConfig}", shell=True)
 
 def makeURL(path):
 

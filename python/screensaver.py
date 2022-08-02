@@ -68,12 +68,11 @@ class ScreenSaver(object):
     # Called when a button is pressed. Reset the activity timer and stop the screensaver if active.
     def isActive(self):
         self.lastInput = time.time()
-        if self.active == True:
-            # was active, disable it.
-            self.active = False
-            return True
-        else:
+        if self.active != True:
             return False
+        # was active, disable it.
+        self.active = False
+        return True
 
     def start(self):
         self.active = True
@@ -88,7 +87,7 @@ class ScreenSaver(object):
 
         self.device.contrast(80)
 
-        while self.active == True:
+        while self.active:
             with regulator:
 
                 frame_count += 1
@@ -103,29 +102,15 @@ class ScreenSaver(object):
 
 def local_get_device():
     parser = cmdline.create_parser(description='luma.examples arguments')
-    config = []
+    config = [
+        "--display=ssd1351",
+        "--interface=spi",
+        "--width=128",
+        "--height=128",
+        "--spi-bus-speed=16000000",
+        "--rotate=0",
+    ]
 
-    if True:
-        config.append("--display=ssd1351")
-        config.append("--interface=spi")
-        config.append("--width=128")
-        config.append("--height=128")
-        config.append("--spi-bus-speed=16000000")
-        config.append("--rotate=0")
-    else:
-        config.append("--display=st7735")
-        config.append("--interface=spi")
-        config.append("--spi-bus-speed=16000000")
-        config.append("--gpio-reset=24")
-        config.append("--gpio-data-command=23")
-        config.append("--gpio-backlight=18")
-        config.append("--width=128")
-        config.append("--height=128")
-        config.append("--bgr")
-        config.append("--h-offset=1")
-        config.append("--v-offset=2")
-        config.append("--backlight-active=high")
-        config.append("--rotate=0")
 
     args = parser.parse_args(config)
 

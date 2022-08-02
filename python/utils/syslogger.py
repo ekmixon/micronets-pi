@@ -32,7 +32,7 @@ class SysLogger(Singleton):
             tokens = imgFile.rsplit('.',1)
             if len(tokens) == 2:
                 imgFile = tokens[-2]
-            filename = "/tmp/{}".format(imgFile) + ".log"
+            filename = f"/tmp/{imgFile}" + ".log"
 
         # Configure logging to log to a file, making a new file at midnight and keeping the last 3 day's data
         # Give the logger a unique name (good practice)
@@ -56,7 +56,9 @@ class SysLogger(Singleton):
         if __name__ != '__main__':
             script = sys.argv[0].rsplit('/',1)[-1]
             self._logger.info("   ")
-            self._logger.info("------------------------ Executing {} -------------------------".format(script))
+            self._logger.info(
+                f"------------------------ Executing {script} -------------------------"
+            )
 
 
         # TODO: Use debug logging level??

@@ -10,13 +10,7 @@ from luma.core.sprite_system import framerate_regulator
 from luma.core import cmdline, error
 from PIL import ImageFont
 import os
-#import RPi.GPIO as GPIO
-
-
-if __name__ == '__main__':
-    from utils.syslogger import SysLogger
-else:
-    from utils.syslogger import SysLogger
+from utils.syslogger import SysLogger
 logger = SysLogger().logger()
 
 # ignore PIL debug messages
@@ -30,21 +24,21 @@ class GDisp_st7735(object):
         parser = cmdline.create_parser(description='luma.examples arguments')
 
         #config = cmdline.load_config(args.config)
-        config = []
-        config.append("--display=st7735")
-        config.append("--interface=spi")
-        config.append("--spi-bus-speed=16000000")
-        config.append("--gpio-reset=24")
-        config.append("--gpio-data-command=23")
-        config.append("--gpio-backlight=18")
-        config.append("--width=128")
-        config.append("--height=128")
-        config.append("--bgr")
-        config.append("--h-offset=1")
-        config.append("--v-offset=2")
-        config.append("--backlight-active=high")
-        config.append("--rotate=3")
-
+        config = [
+            "--display=st7735",
+            "--interface=spi",
+            "--spi-bus-speed=16000000",
+            "--gpio-reset=24",
+            "--gpio-data-command=23",
+            "--gpio-backlight=18",
+            "--width=128",
+            "--height=128",
+            "--bgr",
+            "--h-offset=1",
+            "--v-offset=2",
+            "--backlight-active=high",
+            "--rotate=3",
+        ]
 
         args = parser.parse_args(config)
 

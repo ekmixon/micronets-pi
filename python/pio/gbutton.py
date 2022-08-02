@@ -39,9 +39,8 @@ class GButton(object):
 
         #print "button {} click. Inverted: {} Pressed: {}".format(self.pin, self.invert, pressed)
 
-        if (pressed):
-            if self.user_callback:
-                self.user_callback()
+        if pressed and self.user_callback:
+            self.user_callback()
 
     def is_set(self):
         return GPIO.input(self.pin) == self.invert

@@ -13,8 +13,7 @@ import os, sys, time, traceback
 from subprocess import call
 
 def makeURL(host, path):
-	url = "{}/portal/v1/dpp/{}".format(host, path)
-	return url
+	return f"{host}/portal/v1/dpp/{path}"
 
 def exec_dpp_onboard_proxy(config, mac, dpp_uri, display):
 
